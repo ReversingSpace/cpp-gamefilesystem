@@ -21,12 +21,15 @@
 // API
 #include <ReversingSpace/GameFileSystem/API.hpp>
 
+// uint8_t
+#include <cstdint>
+
 namespace ReversingSpace
 {
     namespace GameFileSystem
     {
         /**
-         * @brief Pure virtual representation of a File on the FileSystem.
+         * @brief Virtual representation of a File on the FileSystem.
          * 
          * A File object represents a file that may or may not exist in the
          * underlying FileSystem.  The object is not necessarily interested
@@ -36,9 +39,8 @@ namespace ReversingSpace
          * 
          * There are a limited number of pure virtual methods provided in File
          * to ensure that certain access (and support) can be given to
-         * downstream applications.  Bear in mind everything else is derived
-		 * from the stream methods, so it makes sense to limit the number and
-		 * complexity.
+         * downstream applications.  The rest is handled using inline template 
+		 * member functions.
          * 
          * API is defined in the event it gets expanded (to prevent issues);
          * the API is not expected to be used, but is preventatively given
@@ -47,7 +49,7 @@ namespace ReversingSpace
         class GAMEFILESYSTEM_API File
         {
         public:
-			enum class SeekOffset : uint8_t
+			enum class SeekOffset : std::uint8_t
 			{
 				Start = 0,
 				Current,
