@@ -12,7 +12,7 @@
 
 /**
  * @file File.hpp
- * @brief Pure virtual File definition.
+ * @brief Virtual File definition.
 **/
 
 #ifndef __REVERSINGSPACE__GAMEFILESYSTEM__FILE_HPP__
