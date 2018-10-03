@@ -15,7 +15,8 @@ Yet another review pull, adding I/O to the `View` object and expanding on the te
 - Added RW test.
 
 ### Fixed
-- Fixed the copyright year in the MIT Licence document.
+- Fixed the copyright year in the MIT Licence document;
+- Bad view calculation code (muddled from ORL and riki projects where one updates internally and the other functions similar to this).
 
 ### Changed
 - Pre-existing internals test now removes the file it creates.
