@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.1-pre-alpha1] - 2018-10-03
+
+Yet another review pull, adding I/O to the `View` object and expanding on the testing (adding `-internals-rw`).
+
+### Added
+- Added `read`, `read_from`, `write` and `write_to` functionality for both raw pointers (char*, and a size value) and vectors (`std::vector<std::uint8_t>`);
+- Added RW test.
+
+### Fixed
+- Fixed the copyright year in the MIT Licence document.
+
 ## [0.0.1-pre] - 2018-10-03
 
 Another review pull.  Moving forward from a full rewrite (prompted by `std::filesystem` becoming viable).

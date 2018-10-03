@@ -24,7 +24,7 @@
 // std::shared_mutex
 #include <shared_mutex>
 
-// A vector is used to store views.
+// A vector is used for I/O from the View structure.
 #include <vector>
 
 namespace reversingspace {
@@ -127,6 +127,117 @@ namespace reversingspace {
 			 * Designed to enable shared_ptr usage (or reckless abandon).
 			 */
 			~View();
+
+		public: // Read/Write + Helpers for I/O.
+
+			/**
+			 * @brief Gets raw access to the data pointer.
+			 * @return `view_pointer` (the raw data pointer).
+			 *
+			 * This should typically not be required, but in the event
+			 * the engine/system requiring it 
+			 */
+			inline void* get_data_pointer() {
+				return view_pointer;
+			}
+
+			/**
+			 * @brief Calculates size allowances.
+			 *
+			 * Performs an internal test to see if it can be used,
+			 * returning the read or write allowances.
+			 */
+			StorageSize calculate_allowance(StorageSize offset, StorageSize requested);
+
+			/**
+			 * @brief Reads from the cursor position.
+			 * @oaram[out] data Pointer to preallocated buffer (for storage).
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes read.
+			 * 
+			 * This method will lock the internal mutex for WRITE as it moves
+			 * the cursor.
+			 */
+			StorageSize read(char* data, StorageSize requested);
+
+			/**
+			 * @brief Reads data from a file into a vector.
+			 * @oaram[out] data Vector for storing data.
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes read.
+			 * 
+			 * This method will lock the internal mutex for WRITE as it moves
+			 * the cursor.
+			 */
+			StorageSize read(std::vector<std::uint8_t>& data, StorageSize requested);
+
+			/**
+			 * @brief Reads from a specific offset in the view, storing it in the buffer.
+			 * @param[in] offset  Offset (from the start of the view).
+			 * @oaram[out] data Pointer to preallocated buffer (for storage).
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes read.
+			 * 
+			 * This method will NOT lock.
+			 */
+			StorageSize read_from(StorageOffset offset, char* data, StorageSize requested);
+
+			/**
+			 * @brief Reads data from a file into a vector.
+			 * @param[in] offset  Offset (from the start of the view).
+			 * @oaram[out] data Vector for storing data.
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes read.
+			 * 
+			 * This method will NOT lock.
+			 */
+			StorageSize read_from(StorageOffset offset, std::vector<std::uint8_t>& data, StorageSize requested);
+
+			/**
+			 * @brief Write a requested number of bytes into a file instance.
+			 * This writes to the end of the data stream (using 'cursor').
+			 * @param[in,out] data Pointer to data (buffer) to be written.
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes written.
+			 * 
+			 * This method will lock the internal mutex for WRITE.
+			 */
+			StorageSize write(char* data, StorageSize requested);
+
+			/**
+			 * @brief Reads data into a file from a vector.
+			 * This writes to the end of the data stream (using 'cursor').
+			 * @param[in,out] data Vector into which data is stored.
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes written.
+			 * 
+			 * This method will lock the internal mutex for WRITE.
+			 */
+			StorageSize write(std::vector<std::uint8_t>& data, StorageSize requested);
+
+			/**
+			 * @brief Write a requested number of bytes into a file instance.
+			 * This writes to the given offset, only updating 'cursor' if it is exceeded.
+			 * @param[in] offset  Offset (from the start of the view).
+			 * @param[in,out] data Pointer to data (storage/buffer).
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes written.
+			 * 
+			 * This method will NOT lock.
+			 */
+			StorageSize write_to(StorageOffset offset, char* data, StorageSize requested);
+
+			/**
+			 * @brief Reads data into a file from a vector.
+			 * This writes to the given offset, only updating 'cursor' if it is exceeded.
+			 * @param[in] offset  Offset (from the start of the view).
+			 * @param[in,out] data Vector into which data is stored.
+			 * @param[in] requested Number of bytes requested.
+			 * @return number of bytes written.
+			 * 
+			 * This method will NOT lock.
+			 */
+			StorageSize write_to(StorageOffset offset, std::vector<std::uint8_t>& data, StorageSize requested);
 		};
 
         /**

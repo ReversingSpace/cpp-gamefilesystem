@@ -31,7 +31,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(
     REVERSINGSPACE_STORAGE_TEST_INTERNALS
-    "Simple test for stroage system (internals)"
+    "Simple test for storage system (internals)"
+    OFF
+)
+
+option(
+    REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW
+    "Simple r/w test for storage system"
     OFF
 )
 
@@ -205,6 +211,31 @@ if(REVERSINGSPACE_STORAGE_TEST_INTERNALS)
     )
     target_link_libraries(
         ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
+        PRIVATE
+        ${LIBRARY_STATIC_NAME}
+    )
+endif()
+
+if(REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW)
+    set(REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME
+        "revspace-storage-test-internals-rw"
+    )
+    add_executable(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME}
+        "${PROJECT_SOURCE_DIR}/tests/internals-rw/main.cpp"
+    )
+    add_dependencies(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME}
+        ${LIBRARY_STATIC_NAME}
+    )
+    target_include_directories(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME}
+        PUBLIC
+        "${PROJECT_SOURCE_DIR}/include"
+        "${PROJECT_SOURCE_DIR}/tests/internals-rw/"
+    )
+    target_link_libraries(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME}
         PRIVATE
         ${LIBRARY_STATIC_NAME}
     )

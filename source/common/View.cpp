@@ -50,5 +50,89 @@ namespace reversingspace {
 
 			return cursor;
 		}
+
+		StorageSize View::calculate_allowance(StorageSize offset, StorageSize requested) {
+			// Safety.
+			if (offset == view_length) {
+				return 0;
+			}
+			StorageSize new_offset = offset + requested;
+			if (new_offset > view_length) {
+				// Better to be explicit here to avoid misreading it later;
+				// this optimises out (based on quick testing), so non-issue.
+				auto modifier = (view_length - new_offset);
+				new_offset -= modifier;
+				return new_offset;
+			}
+			return requested;
+		}
+
+		StorageSize View::read(char* data, StorageSize requested) {
+			std::unique_lock lock(rw_mutex);
+			auto request = (size_t)calculate_allowance(cursor, requested);
+			memcpy(data, (char*)view_pointer + cursor, request);
+			cursor += request;
+			return request;
+		}
+
+		StorageSize View::read(std::vector<std::uint8_t>& data, StorageSize requested) {
+			std::unique_lock lock(rw_mutex);
+			auto request = (size_t)calculate_allowance(cursor, requested);
+			if (data.size() < request) {
+				data.resize(request);
+			}
+			memcpy(data.data(), (char*)view_pointer + cursor, request);
+			cursor += request;
+			return request;
+		}
+
+		StorageSize View::read_from(StorageOffset offset, char* data, StorageSize requested) {
+			auto request = calculate_allowance(offset, requested);
+			memcpy(data, (char*)view_pointer + offset, request);
+			return request;
+		}
+
+		StorageSize View::read_from(StorageOffset offset, std::vector<std::uint8_t>& data, StorageSize requested) {
+			auto request = calculate_allowance(offset, requested);
+			if (data.size() < request) {
+				data.resize(request);
+			}
+			memcpy(data.data(), (char*)view_pointer + offset, request);
+			return request;
+		}
+
+		StorageSize View::write(char* data, StorageSize requested) {
+			std::unique_lock lock(rw_mutex);
+			auto request = calculate_allowance(cursor, requested);
+			memcpy((char*)view_pointer + cursor, data, request);
+			cursor += request;
+			return request;
+		}
+
+		StorageSize View::write(std::vector<std::uint8_t>& data, StorageSize requested) {
+			std::unique_lock lock(rw_mutex);
+			auto request = calculate_allowance(cursor, requested);
+			if (data.size() < request) {
+				data.resize(request);
+			}
+			memcpy((char*)view_pointer + cursor, data.data(), request);
+			cursor += request;
+			return request;
+		}
+
+		StorageSize View::write_to(StorageOffset offset, char* data, StorageSize requested) {
+			auto request = calculate_allowance(offset, requested);
+			memcpy((char*)view_pointer + offset, data, request);
+			return request;
+		}
+
+		StorageSize View::write_to(StorageOffset offset, std::vector<std::uint8_t>& data, StorageSize requested) {
+			auto request = calculate_allowance(offset, requested);
+			if (data.size() < request) {
+				data.resize(request);
+			}
+			memcpy((char*)view_pointer + offset, data.data(), request);
+			return request;
+		}
 	}
 }
