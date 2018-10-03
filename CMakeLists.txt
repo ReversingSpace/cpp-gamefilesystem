@@ -5,8 +5,7 @@
 # ---------------------------------------------------------------------
 
 # Travis CI is being used as the low bar for compiler support on macOS
-# and Linux.  Windows 10 is the lowest supported version of Windows,
-# as 8.1 hits end of mainstream in January 2018.
+# and Linux.  Windows 10 is now the lowest supported version of Windows.
 #
 # Some versions for minimum support:
 # - Visual C++ 2017 runtime;
@@ -16,31 +15,28 @@
 # Anything earlier can be handled with preprocessors.
 
 # Minimum CMake version must be defined early.
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.0)
 
 # Project identification must happen early too.
 project(cpp_game_filesystem)
 
-# ---------------------------------------------------------------------
-# Project options (what users need to mess with)
-# ---------------------------------------------------------------------
-
-# Build the static version of the library?
-option(BUILD_STATIC_LIBS "Build the static library" ON)
-
-# Build the shared version of the library?
-option(BUILD_SHARED_LIBS "Build the shared library" ON)
+# Adding C++20 support when it's available.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ---------------------------------------------------------------------
 # Project definitions
 # - Includes CMake configuration related code.
 # ---------------------------------------------------------------------
 
-# Build name for the shared copy of the library.
-set(library_shared_name "game-filesystem")
+option(
+    REVERSINGSPACE_STORAGE_TEST_INTERNALS
+    "Simple test for stroage system (internals)"
+    OFF
+)
 
 # Build name for the static copy of the library.
-set(library_static_name "game-filesystem-static")
+set(LIBRARY_STATIC_NAME "game-filesystem-static")
 
 # ---------------------------------------------------------------------
 # Soure code listings
@@ -55,31 +51,40 @@ set(library_static_name "game-filesystem-static")
 #  'Header Files\\'
 set(HEADERS_ROOT
     # Root level header.  It's the "include me if you're lazy" file.
-    "${CMAKE_SOURCE_DIR}/include/ReversingSpace/GameFileSystem.hpp"
+    "${PROJECT_SOURCE_DIR}/include/ReversingSpace/GameFileSystem.hpp"
     
 )
 source_group("Header Files\\ReversingSpace" FILES ${HEADERS_ROOT})
 
 # Project root
 set(HEADERS_PROJECT
-    # API file (used quite a bit)
-    "${CMAKE_SOURCE_DIR}/include/ReversingSpace/GameFileSystem/API.hpp"
-
     # No build config here (todo?)
     # Config file would be a CMake build.
 
+    # Core (common configuration/includes)
+    "${PROJECT_SOURCE_DIR}/include/ReversingSpace/Storage/Core.hpp"
+
     # Directory
-    "${CMAKE_SOURCE_DIR}/include/ReversingSpace/GameFileSystem/Directory.hpp"
+    "${PROJECT_SOURCE_DIR}/include/ReversingSpace/Storage/Directory.hpp"
 
     # File
-    "${CMAKE_SOURCE_DIR}/include/ReversingSpace/GameFileSystem/File.hpp"
+    "${PROJECT_SOURCE_DIR}/include/ReversingSpace/Storage/File.hpp"
 )
-source_group("Header Files\\ReversingSpace\\GameFileSystem" FILES ${HEADERS_PROJECT})
+source_group("Header Files\\reversingspace\\storage" FILES ${HEADERS_PROJECT})
 
 # Sources that are common to all platforms.
 set(COMMON_SOURCES
     ${HEADERS_ROOT}
     ${HEADERS_PROJECT}
+
+    # Common View code.
+    "${PROJECT_SOURCE_DIR}/source/common/View.cpp"
+
+    # Common File code.
+    "${PROJECT_SOURCE_DIR}/source/common/File.cpp"
+
+    # Common Directory code.
+    "${PROJECT_SOURCE_DIR}/source/common/Directory.cpp"
 )
 
 # Shared sources that are common to all platforms.
@@ -95,7 +100,8 @@ set(STATIC_COMMON_SOURCES
 # Windows
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(PLATFORM_SOURCES
-        "${CMAKE_SOURCE_DIR}/source/Windows/File.cpp"
+        "${PROJECT_SOURCE_DIR}/source/Windows/File.cpp"
+        "${PROJECT_SOURCE_DIR}/source/Windows/View.cpp"
     )
 
     set(SHARED_PLATFORM_SOURCES
@@ -105,12 +111,17 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(STATIC_PLATFORM_SOURCES
     
     )
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+endif()
+
+set(POSIX_SOURCES
+    "${PROJECT_SOURCE_DIR}/source/POSIX/File.cpp"
+    "${PROJECT_SOURCE_DIR}/source/POSIX/View.cpp"
+)
 
 # macOS
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(PLATFORM_SOURCES
-        "${CMAKE_SOURCE_DIR}/source/Darwin/File.cpp"
+        ${POSIX_SOURCES}
     )
 
     set(SHARED_PLATFORM_SOURCES
@@ -120,12 +131,12 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(STATIC_PLATFORM_SOURCES
     
     )
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+endif()
 
 # Linux
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(PLATFORM_SOURCES
-        "${CMAKE_SOURCE_DIR}/source/Linux/File.cpp"
+        ${POSIX_SOURCES}
     )
 
     set(SHARED_PLATFORM_SOURCES
@@ -135,49 +146,66 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(STATIC_PLATFORM_SOURCES
     
     )
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+endif()
 
-# OpenBSD (not yet supported, but listed to remind me/us).
-#IF({CMAKE_SYSTEM_NAME} STREQUAL "OpenBSD")
-#ENDIF({CMAKE_SYSTEM_NAME} STREQUAL "OpenBSD")
+# OpenBSD
+if(${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+    set(PLATFORM_SOURCES
+        ${POSIX_SOURCES}
+    )
+
+    set(SHARED_PLATFORM_SOURCES
+
+    )
+
+    set(STATIC_PLATFORM_SOURCES
+
+    )
+endif()
 
 # ---------------------------------------------------------------------
-# Library definitions
+# Library definition
 # ---------------------------------------------------------------------
 
-if(${BUILD_SHARED_LIBS})
-    add_library(
-        ${library_shared_name}
-        SHARED
-        ${COMMON_SOURCES}
-        ${PLATFORM_SOURCES}
-        ${SHARED_PLATFORM_SOURCES}
-        ${SHARED_COMMON_SOURCES}
-    )
-    target_include_directories(
-        ${library_shared_name}
-        PUBLIC
-        "${CMAKE_SOURCE_DIR}/include"
-    )
-    target_compile_definitions(
-        ${library_shared_name}
-        PUBLIC
-        -DGAMEFILESYSTEM_SHARED=1
-    )
-endif(${BUILD_SHARED_LIBS})
+add_library(
+    ${LIBRARY_STATIC_NAME}
+    STATIC
+    ${COMMON_SOURCES}
+    ${PLATFORM_SOURCES}
+    ${STATIC_PLATFORM_SOURCES}
+    ${STATIC_COMMON_SOURCES}
+)
+target_include_directories(
+    ${LIBRARY_STATIC_NAME}
+    PUBLIC
+    "${PROJECT_SOURCE_DIR}/include"
+)
 
-if(${BUILD_STATIC_LIBS})
-    add_library(
-        ${library_static_name}
-        STATIC
-        ${COMMON_SOURCES}
-        ${PLATFORM_SOURCES}
-        ${STATIC_PLATFORM_SOURCES}
-        ${STATIC_COMMON_SOURCES}
+# ---------------------------------------------------------------------
+# Internals test
+# ---------------------------------------------------------------------
+
+if(REVERSINGSPACE_STORAGE_TEST_INTERNALS)
+    set(REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME
+        "revspace-storage-test-internals"
+    )
+    add_executable(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
+        "${PROJECT_SOURCE_DIR}/tests/internals/main.cpp"
+    )
+    add_dependencies(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
+        ${LIBRARY_STATIC_NAME}
     )
     target_include_directories(
-        ${library_static_name}
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
         PUBLIC
-        "${CMAKE_SOURCE_DIR}/include"
+        "${PROJECT_SOURCE_DIR}/include"
+        "${PROJECT_SOURCE_DIR}/tests/internals/"
     )
-endif(${BUILD_STATIC_LIBS})
+    target_link_libraries(
+        ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
+        PRIVATE
+        ${LIBRARY_STATIC_NAME}
+    )
+endif()

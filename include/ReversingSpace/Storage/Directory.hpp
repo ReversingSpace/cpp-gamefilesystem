@@ -10,12 +10,7 @@
  * except according to those terms.
 **/
 
-#ifndef REVERSINGSPACE_GAMEFILESYSTEM_HPP
-#define REVERSINGSPACE_GAMEFILESYSTEM_HPP
+#ifndef REVERSINGSPACE_STORAGE_DIRECTORY_HPP
+#define REVERSINGSPACE_STORAGE_DIRECTORY_HPP
 
-// This is incomplete as it only provides storage access code.
-
-#include <ReversingSpace/Storage/File.hpp>
-#include <ReversingSpace/Storage/Directory.hpp>
-
-#endif//REVERSINGSPACE_GAMEFILESYSTEM_HPP
+#endif//REVERSINGSPACE_STORAGE_DIRECTORY_HPP
