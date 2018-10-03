@@ -17,6 +17,9 @@ Yet another review pull, adding I/O to the `View` object and expanding on the te
 ### Fixed
 - Fixed the copyright year in the MIT Licence document.
 
+### Changed
+- Pre-existing internals test now removes the file it creates.
+
 ## [0.0.1-pre] - 2018-10-03
 
 Another review pull.  Moving forward from a full rewrite (prompted by `std::filesystem` becoming viable).
