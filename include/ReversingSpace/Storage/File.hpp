@@ -134,18 +134,37 @@ namespace reversingspace {
 			 * @brief Gets raw access to the data pointer.
 			 * @return `view_pointer` (the raw data pointer).
 			 *
-			 * This should typically not be required, but in the event
-			 * the engine/system requiring it 
+			 * This should typically not be required, and is provided only
+			 * to allow for more advanced usage than is typically required.
 			 */
 			inline void* get_data_pointer() {
 				return view_pointer;
 			}
 
 			/**
-			 * @brief Calculates size allowances.
+			 * @brief Gets the view size (in bytes).
+			 * @return View size, in bytes.
 			 *
-			 * Performs an internal test to see if it can be used,
-			 * returning the read or write allowances.
+			 * This is designed to be used with `get_data_pointer`.
+			 */
+			inline StorageSize get_size() const {
+				return view_length;
+			}
+
+			/**
+			 * @brief Calculates size allowances.
+			 * @param[in] offset      Offset from which to calculat.
+			 * @param[in] requested   Number of bytes requested.
+			 * @return Number of bytes which can be written or read.
+			 *
+			 * This method calculates the maximum number of bytes which can be
+			 * written to, or read from, based on a given offset and requested
+			 * size.  This uses the length of the mapped view internally and
+			 * is designed to reduce issues with over-writing.
+			 *
+			 * This is made public to enable testing prior to writing (though
+			 * the system will test internally again, so it's best to just write
+			 * or read and then re-issue the command).
 			 */
 			StorageSize calculate_allowance(StorageSize offset, StorageSize requested);
 

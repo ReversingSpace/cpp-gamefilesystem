@@ -13,6 +13,9 @@
 // This is the COMMON Object (view/map) file.
 #include <ReversingSpace/Storage/File.hpp>
 
+// memcpy
+#include <cstring>
+
 namespace reversingspace {
 	namespace storage {
 		StorageSize View::seek(StorageOffset offset, Seek whence) {

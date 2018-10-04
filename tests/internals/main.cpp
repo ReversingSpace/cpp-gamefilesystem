@@ -1,6 +1,8 @@
 // Test for ReversingSpace/cpp-gamefilesystem.
 
 #include <ReversingSpace/GameFileSystem.hpp>
+
+#include <iostream>
 #include <stdexcept>
 
 int main(int argc, char **argv) {
@@ -29,7 +31,8 @@ int main(int argc, char **argv) {
 		{
 			auto file_size = test1_file->get_size();
 			if (file_size  != 4096) {
-				throw std::runtime_error("test1.ext should be 4096, but is " + file_size);
+				std::cout << "test1.ext should be 4096, but is " << file_size << std::endl;
+				throw std::runtime_error("text1.ext failure");
 			}
 		}
 
@@ -41,7 +44,8 @@ int main(int argc, char **argv) {
 		{
 			auto file_size = test1_file->get_size();
 			if (file_size != 12288) {
-				throw std::runtime_error("test1.ext should be 12288, but is " + file_size);
+				std::cout << "test1.ext should be 12288, but is " << file_size << std::endl;
+				throw std::runtime_error("text1.ext failure");
 			}
 		}
 	}

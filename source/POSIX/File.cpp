@@ -37,7 +37,62 @@ namespace reversingspace {
 		}
 	}
 #endif
+
 	namespace storage {
+		bool File::open() {
+			int flags = 0;
+			mode_t mode = 0;
+
+			const mode_t R_MODE = S_IRUSR | S_IRGRP | S_IROTH;
+			const mode_t W_MODE = S_IWUSR;
+			const mode_t E_MODE = S_IXUSR;
+
+			// This needs more testing, as does the Win32 version.
+			switch (access) {
+				case FileAccess::Read: {
+					flags = O_RDONLY;
+					mode = R_MODE;
+				} break;
+				case FileAccess::Write: {
+					// flags = O_WRONLY | O_CREAT;
+					//  mode = O_RDWR;
+
+					// Not all platforms are trustworthy here,
+					// which, given this is POSIX, is weird.
+					//
+					// Read is required to prevent platforms that do a 'test read'
+					// somewhere from freaking out.  This isn't ideal, but for
+					// some reason cursor work freaks it out in some tests.
+					flags = O_RDWR | O_CREAT;
+					mode = R_MODE | W_MODE;
+				} break;
+				case FileAccess::ReadWrite: {
+					flags = O_RDWR | O_CREAT;
+					mode = R_MODE | W_MODE;
+				} break;
+				case FileAccess::ReadExecute: {
+					flags = O_RDONLY;
+					mode = R_MODE | E_MODE;
+				} break;
+				case FileAccess::Execute: {
+					flags = O_RDONLY;
+					// Enable read to prevent some weird edge cases in testing.
+					mode = R_MODE | E_MODE;
+				} break;
+				case FileAccess::ReadWriteExecute: {
+					flags = O_RDWR | O_CREAT;
+					mode = R_MODE | E_MODE | W_MODE;
+				} break;
+			}
+
+			file_handle = ::open(
+				path.string().c_str(),
+				flags,
+				mode
+			);
+			return file_handle != PLATFORM_INVALID_FILE_HANDLE;
+		}
+
 		// Platform-specific terminate.
 		void File::close() {
 			::close(file_handle);

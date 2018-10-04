@@ -214,6 +214,24 @@ if(REVERSINGSPACE_STORAGE_TEST_INTERNALS)
         PRIVATE
         ${LIBRARY_STATIC_NAME}
     )
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        target_link_libraries(
+            ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
+            PRIVATE
+            "stdc++fs"
+            "pthread"
+        )
+    endif()
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+        target_link_libraries(
+            ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_BINARY_NAME}
+            PRIVATE
+            "stdc++fs"
+            "pthread"
+        )
+    endif()
 endif()
 
 if(REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW)
@@ -239,4 +257,22 @@ if(REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW)
         PRIVATE
         ${LIBRARY_STATIC_NAME}
     )
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        target_link_libraries(
+            ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME}
+            PRIVATE
+            "stdc++fs"
+            "pthread"
+        )
+    endif()
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+        target_link_libraries(
+            ${REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW_BINARY_NAME}
+            PRIVATE
+            "stdc++fs"
+            "pthread"
+        )
+    endif()
 endif()
