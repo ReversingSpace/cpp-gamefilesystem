@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+const int VIEW_SIZE = 4096;
+
 int main(int argc, char **argv) {
 	auto cwd = std::filesystem::current_path();
 	auto test0 = cwd / "test-rw0.ext";
@@ -18,16 +20,26 @@ int main(int argc, char **argv) {
 
 	{
 		// Be kind.
-		int random_offset = rand() % 4096;
-		if (random_offset + 64 > 4096) {
+		int random_offset = rand() % VIEW_SIZE;
+		if (random_offset + 64 > VIEW_SIZE) {
 			random_offset -= 64;
 		}
 
 		std::uint64_t random_value = (std::uint64_t)(rand() % 0xFFFFFFFF) << 32
 			| (std::uint64_t)(rand() % 0xFFFFFFFF);
 
+		// This is just a dummy value.
+		std::uint64_t random_value2 = 0;
+
+		// Make it invalid for reading or writing.
+		std::uint64_t random_value2_offset = VIEW_SIZE -
+			(sizeof(decltype(random_value2)) / 2);
+
 		auto test1_file = reversingspace::storage::File::create(test1,
 			reversingspace::storage::FileAccess::ReadWrite);
+		if (test1_file == nullptr) {
+			throw std::runtime_error("test1_file is nullptr.");
+		}
 		std::string test_string_data = "This is a test.";
 		std::uint32_t test_string_length = 0;
 		const std::uint32_t test_string_length_size = sizeof(decltype(test_string_length));
@@ -79,6 +91,15 @@ int main(int argc, char **argv) {
 				throw std::runtime_error("failed to write random value.");
 			}
 			view->flush();
+
+			auto allowance = view->calculate_allowance(
+				random_value2_offset, sizeof(decltype(random_value2))
+			);
+			if (allowance == (sizeof(decltype(random_value2)) / 2)) {
+				printf("[+] allowance test passed.\n");
+			} else {
+				printf("[-] allowance test failed.\n");
+			}
 		}
 		{
 			auto view = test1_file->get_view(0, 4096);

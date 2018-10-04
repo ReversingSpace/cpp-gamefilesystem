@@ -18,6 +18,8 @@ Apache 2.0 or MIT (your choice); see `COPYRIGHT` for full statement.
 
 As the wiki suggests, there is limited support.  The first target is Windows (as it has the most irritating filesystem code), but what follows should explain a few things.
 
+**gcc 8 or better is required for `std::filesystem`.**
+
 ### Windows
 
 The minimum version of Windows is Windows 10.  [Windows 8 reached the end of its mainstream support in January 2018](https://support.microsoft.com/en-us/help/13853/windows-lifecycle-fact-sheet), and since this library is being started in October 2017, there is no reason to support Windows 7 or Windows 8.

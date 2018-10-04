@@ -10,9 +10,7 @@
  * except according to those terms.
 **/
 
-// POSIX view file.
-
-// This is the WINDOWS file code.
+// This is the POSIX View code.
 #if defined(__unix__) || (defined (__APPLE__) && defined (__MACH__))
 #include <unistd.h>
 #if defined(_POSIX_VERSION)
@@ -24,7 +22,97 @@
 #include <sys/stat.h>
 
 namespace reversingspace {
-	namespace reversingspace {
+	namespace storage {
+		bool View::open_mapping() {
+			// Typically page size.
+			std::uint64_t granularity = GET_PLATFORM_GRANULARITY();
+
+			// File size (for later use)
+			std::uint64_t file_size = (std::uint64_t)file->get_size();
+
+			// Size of mapping is either length, or, if it's zero, 
+			// then map the whole file.  If it's not, map the given length.
+			std::uint64_t mapping_size = (view_length == 0)
+				? file_size - (std::uint64_t)file_offset
+				: view_length;
+
+			// The real offset is calculated by page size, this is the
+			// number of pages into a file.
+			std::uint64_t real_offset = (file_offset / granularity) * granularity;
+
+			// Offset + Length
+			std::uint64_t offset_plus_size = file_offset + view_length;
+
+			// Truncate only if we're allowed to truncate.  This is how the view is
+			// expanded to support new data.
+			if ((int)file->access & (int)FileAccess::Write) {
+				if (file_offset + mapping_size > file_size) {
+					// Need to truncate *up* otherwise the map will fail.
+					// This took some times, and it runs better here to make
+					// sure it expands upwards.
+					if (ftruncate(file->file_handle, file_offset + mapping_size) == -1) {
+						return false;
+					}
+					file_size = file_offset + mapping_size;
+				}
+			}
+
+			int prot = 0;
+			int mapping = MAP_SHARED; // 0;
+			switch (file->access) {
+				case FileAccess::Read: {
+					prot = PROT_READ;
+					//mapping = MAP_PRIVATE | MAP_POPULATE;
+				} break;
+				case FileAccess::Write: {
+					// 'read' to ensure cursor work doesn't ever break it.
+					prot = PROT_READ | PROT_WRITE;
+					//mapping = MAP_SHARED;
+				} break;
+				case FileAccess::ReadWrite: {
+					prot = PROT_READ | PROT_WRITE;
+					//mapping = MAP_SHARED;
+				} break;
+				case FileAccess::ReadExecute: {
+					prot = PROT_READ | PROT_EXEC;
+					//mapping = MAP_PRIVATE | MAP_POPULATE;
+				} break;
+				case FileAccess::Execute: {
+					prot = PROT_READ | PROT_EXEC;
+					//mapping = MAP_PRIVATE | MAP_POPULATE;
+				} break;
+				case FileAccess::ReadWriteExecute: {
+					prot = PROT_READ | PROT_WRITE | PROT_EXEC;
+					//mapping = MAP_SHARED;
+				} break;
+			}
+
+			view_pointer = ::mmap(
+				0,
+				file_offset - real_offset + mapping_size,
+				prot,
+				mapping,
+				file->file_handle,
+				real_offset
+			);
+			if (view_pointer == MAP_FAILED) {
+				return false;
+			}
+			cursor = 0;
+			view_pointer = (char*)view_pointer + file_offset - real_offset;
+			return true;
+		}
+
+		bool View::flush() {
+			std::uint64_t granularity = GET_PLATFORM_GRANULARITY();
+			char* data = (char*)view_pointer - (
+				file_offset - ((file_offset / granularity) * granularity)
+			);
+			std::size_t mapped_size = view_length + ((char*)view_pointer - data);
+			auto result = ::msync(data, mapped_size, MS_SYNC);
+			return result == 0;
+		}
+
 		View::~View() {
 			if (file != nullptr) {
 				// Flush (if appropriate)
@@ -40,8 +128,8 @@ namespace reversingspace {
 					file_offset - (
 					(file_offset / granularity) * granularity)
 				);
-				std::size_t real_size = view_length + ((u8*)view_pointer - data);
-				::munmap(const_cast<u8*>(data), real_size);
+				std::size_t real_size = view_length + ((char*)view_pointer - data);
+				::munmap(data, real_size);
 				// Remove the reference here to trigger the shared_ptr deconstruction.
 				this->file = nullptr;
 			}

@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.1-pre-alpha1-b] - 2018-10-03
+
+Initial POSIX support.  Tested on Linux (ARM).
+
+### Added
+- Initial POSIX code (completed from skeletal) from `riki` (dropped my own licence to push it into the repository, as well as decoupling it from the `riki` storage system);
+- Added `get_size()` to View API for use with the raw data pointer.
+
+### Fixed
+- Minor documentation bugs in View API;
+- Missing documentation param fields for `calculate_allowance`.
+
 ## [0.0.1-pre-alpha1] - 2018-10-03
 
 Yet another review pull, adding I/O to the `View` object and expanding on the testing (adding `-internals-rw`).
