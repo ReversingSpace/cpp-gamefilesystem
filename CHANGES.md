@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
-## [0.0.1-pre-alpha1-b] - 2018-10-03
+## [0.0.1-pre-alpha1-b] - 2018-10-04
 
 Initial POSIX support.  Tested on Linux (ARM).
 
