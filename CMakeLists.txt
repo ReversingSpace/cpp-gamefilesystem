@@ -30,7 +30,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ---------------------------------------------------------------------
 
 option(BUILD_SHARED_LIBS "Build the shared library (dll, so, dylib)" ON)
-option(BUILD_STATIC_LIBS "Build the static library" ON)
+
+# Static libs are always built for the testing.
+#option(BUILD_STATIC_LIBS "Build the static library" ON)
 
 option(
     REVERSINGSPACE_STORAGE_TEST_INTERNALS
@@ -293,5 +295,21 @@ if(REVERSINGSPACE_STORAGE_TEST_INTERNALS_RW)
             "stdc++fs"
             "pthread"
         )
+    endif()
+endif()
+
+# ---------------------------------------------------------------------
+# Internals test
+# ---------------------------------------------------------------------
+
+get_directory_property(IS_NOT_ROOT_DIRECTORY PARENT_DIRECTORY)
+if(IS_NOT_ROOT_DIRECTORY)
+    set(REVERSINGSPACE_GAMEFILESYSTEM_INCLUDE_DIR 
+        "${PROJECT_SOURCE_DIR}/include" PARENT_SCOPE)
+    set(REVERSINGSPACE_GAMEFILESYSTEM_STATIC_LIB 
+        ${LIBRARY_STATIC_NAME} PARENT_SCOPE)
+    if(BUILD_SHARED_LIBS)
+        set(REVERSINGSPACE_GAMEFILESYSTEM_SHARED_LIB 
+            ${LIBRARY_SHARED_NAME} PARENT_SCOPE)
     endif()
 endif()
