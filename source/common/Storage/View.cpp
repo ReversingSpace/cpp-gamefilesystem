@@ -16,6 +16,14 @@
 // memcpy
 #include <cstring>
 
+// We know there's a loss, but that's due to certain functions
+// we can't control.  It's incredibly unlikely anyone is using
+// memcpy for >4GB of memory, so the warning is borderline useless.
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4244)
+#endif//defined(_MSC_VER)
+
 namespace reversingspace {
 	namespace storage {
 		StorageSize View::seek(StorageOffset offset, Seek whence) {
@@ -172,3 +180,7 @@ namespace reversingspace {
 		}
 	}
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif//defined(_MSC_VER)

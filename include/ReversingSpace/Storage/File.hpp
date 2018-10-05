@@ -27,7 +27,16 @@
 // A vector is used for I/O from the View structure.
 #include <vector>
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif//defined(_MSC_VER)
+
 namespace reversingspace {
+	namespace gfs {
+		class REVSPACE_GAMEFILESYSTEM_API PlatformFile;
+	}
+
     namespace storage {
 		/**
 		 * @brief Virtual FileSystem object/entry/entity.
@@ -36,7 +45,7 @@ namespace reversingspace {
 		 * as a 'map' or a 'view'.  It is called `View` here as it is a view
 		 * into a given map.
 		 */
-		class View {
+		class REVSPACE_GAMEFILESYSTEM_API View {
 		private:
 			/**
 			 * @brief Allow `File` to create without exposing.
@@ -74,14 +83,14 @@ namespace reversingspace {
 			/**
 			 * @brief Offset within the file.
 			 */
-			size_t file_offset;
+			StorageSize file_offset;
 
 			/**
 			 * @brief Length of the mapped data (in bytes).
 			 *
 			 * This is the "mapped size".
 			 **/
-			size_t view_length;
+			StorageSize view_length;
 
 			// Note: File size can be fetched from the file.
 
@@ -131,6 +140,14 @@ namespace reversingspace {
 		public: // Read/Write + Helpers for I/O.
 
 			/**
+			 * @brief Gets the offset from the start of the underlying file.
+			 * @return   Offset within the file.
+			 */
+			inline StorageSize get_file_offset() const {
+				return file_offset;
+			}
+
+			/**
 			 * @brief Gets raw access to the data pointer.
 			 * @return `view_pointer` (the raw data pointer).
 			 *
@@ -149,6 +166,14 @@ namespace reversingspace {
 			 */
 			inline StorageSize get_size() const {
 				return view_length;
+			}
+
+			/**
+			 * @brief Returns the cursor value.
+			 * @return Returns the `cursor` (current offset).
+			 */
+			inline StorageOffset tell() const {
+				return cursor;
 			}
 
 			/**
@@ -267,7 +292,7 @@ namespace reversingspace {
 		 * The constructor is not hidden, but is completely useless (by design).
 		 * Use the static `create` method to create a `File` object.
         **/ 
-        class File : public std::enable_shared_from_this<File> {
+        class REVSPACE_GAMEFILESYSTEM_API File : public std::enable_shared_from_this<File> {
 		private:
 
 			/**
@@ -357,5 +382,8 @@ namespace reversingspace {
     }
 }
 
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif//defined(_MSC_VER)
 
 #endif//REVERSINGSPACE_STORAGE_FILE_HPP

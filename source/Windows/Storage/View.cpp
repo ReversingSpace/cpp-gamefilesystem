@@ -123,12 +123,14 @@ namespace reversingspace {
 		}
 
 		View::~View() {
+			/*
 			if (file != nullptr) {
 				// Flush (if appropriate)
 				if ((int)file->access & (int)FileAccess::Write) {
 					flush();
 				}
 			}
+			*/
 
 			// Unmap
 			if (view_pointer != nullptr) {

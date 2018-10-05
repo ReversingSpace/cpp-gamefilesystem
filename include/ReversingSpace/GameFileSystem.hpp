@@ -15,7 +15,12 @@
 
 // This is incomplete as it only provides storage access code.
 
+// Storage (underlying code for access)
 #include <ReversingSpace/Storage/File.hpp>
-#include <ReversingSpace/Storage/Directory.hpp>
+
+// GameFileSystem: actual abstraction layer that should
+// generally be the use-case.
+#include <ReversingSpace/GameFileSystem/StorageServer.hpp>
+#include <ReversingSpace/GameFileSystem/Directory.hpp>
 
 #endif//REVERSINGSPACE_GAMEFILESYSTEM_HPP

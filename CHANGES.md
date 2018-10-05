@@ -6,6 +6,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.1-pre-alpha2] - 2018-10-05
+
+This is a restoration patch to bring back some old functionality now that the core code is stable (and it spews far fewer warnings).  It is also a huge patch for moving towards a stable filesystem.  This will require a fairly substantial review, and lead to a need for a lot of testing.
+
+### Added
+- `gfs` namespace for GameFileSystem (step towards actual functionality);
+- `gfs::StorageServer` skeleton;
+- `BUILD_SHARED_LIBS` build option;
+- `PARENT_SCOPE` detection and export aliases;
+- Fixed dated reference to `Object` (from `storage` namespace);
+- Added `tell` and `get_file_offset` to `storage::File`;
+- (Restored) `API.hpp` file with minor changes;
+- Prepended API;
+- Added `gfs::Directory` (placeholder);
+- Added `gfs::Archive` (placeholder);
+- Added `gfs::File` (interface);
+- Added `gfs::PlatformFile` (`storage::File` wrapper);
+- Added `gfs::FileSystem` (interface);
+- Added `gfs::HashFunction` and `gfs::HashedIdentity` for hashing primitives;
+- Added `GameFileSystem/Core.hpp` to contain forwards;
+- Added MSVC suppression code for 4244 (memcpy is size_t) and 4251 (`std::shared_mutex`, `std::shared_ptr`, `std::vector` dynamic linking export issues).
+
+### Changed
+- Restructured source files (into `Storage` subdirectory, mostly).
+
+### Removed
+- Old `storage::Directory` alias/forward.
+
 ## [0.0.1-pre-alpha1-b] - 2018-10-04
 
 Initial POSIX support.  Tested on Linux (ARM).
