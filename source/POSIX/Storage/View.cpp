@@ -43,9 +43,13 @@ namespace reversingspace {
 			// Offset + Length
 			std::uint64_t offset_plus_size = file_offset + view_length;
 
+			// Truncate only if we're allowed to truncate.  This is how the view is
+			// expanded to support new data.
 			if ((int)file->access & (int)FileAccess::Write) {
 				if (file_offset + mapping_size > file_size) {
 					// Need to truncate *up* otherwise the map will fail.
+					// This took some times, and it runs better here to make
+					// sure it expands upwards.
 					if (ftruncate(file->file_handle, file_offset + mapping_size) == -1) {
 						return false;
 					}
@@ -110,12 +114,14 @@ namespace reversingspace {
 		}
 
 		View::~View() {
+			/*
 			if (file != nullptr) {
 				// Flush (if appropriate)
 				if ((int)file->access & (int)FileAccess::Write) {
 					flush();
 				}
 			}
+			*/
 
 			// Unmap
 			if (view_pointer != nullptr) {

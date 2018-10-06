@@ -6,6 +6,66 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.1-pre-alpha3-test-fix] - 2018-10-06
+
+Fix to StorageServer templating and addition of a simple test.
+
+### Added
+- Storage Server test;
+- `Directory` constructor (to bypass symlinking, creation of directories, and all other `create` related code);
+- Added flush to all `PlatformFile` write functions (as the view does not auto-flush anymore);
+- Added `get_stored_file` to `PlatformFile` (to allow proper memory mapping to occur for advanced usage).
+
+### Fixed
+- Removed erroneous template from StorageServer's static `create`;
+- Issue in `StorageServer` constructor;
+- `access` variable not being passed through userland lookups.
+
+### Changed
+- `StorageServer::create` now contains `create_if_missing` (default true) to create missing paths without needing user intervention;
+- `Directory::create` now creates the missing directory when it attempts to load it.  This can be bypassed by using a manual construction of the directory (which can be done by calling the constructor).
+
+## [0.0.1-pre-alpha2-cleanup] - 2018-10-06
+
+This is a minor code update for cleanliness, designed to change compilation only (and not the main code).
+
+### Added
+- Static/Shared testing (as split types);
+- CMake support to add tests a little easier (it mirrors a test into shared and static, depending on the build type);
+- MSVC guard for 4251 to `PlatformFile` (`std::shared_mutex` needing a DLL interface).
+
+### Fixed
+- CMake `SOURCE_GROUP` code now appropriately reflects pathing (without the need for thirdparty code, which is probably still a better idea for complex solutions);
+- Restored `BUILD_STATIC_LIBS` option.
+
+## [0.0.1-pre-alpha2] - 2018-10-05
+
+This is a restoration patch to bring back some old functionality now that the core code is stable (and it spews far fewer warnings).  It is also a huge patch for moving towards a stable filesystem.  This will require a fairly substantial review, and lead to a need for a lot of testing.
+
+### Added
+- `gfs` namespace for GameFileSystem (step towards actual functionality);
+- `gfs::StorageServer` skeleton;
+- `BUILD_SHARED_LIBS` build option;
+- `PARENT_SCOPE` detection and export aliases;
+- Fixed dated reference to `Object` (from `storage` namespace);
+- Added `tell` and `get_file_offset` to `storage::File`;
+- (Restored) `API.hpp` file with minor changes;
+- Prepended API;
+- Added `gfs::Directory` (placeholder);
+- Added `gfs::Archive` (placeholder);
+- Added `gfs::File` (interface);
+- Added `gfs::PlatformFile` (`storage::File` wrapper);
+- Added `gfs::FileSystem` (interface);
+- Added `gfs::HashFunction` and `gfs::HashedIdentity` for hashing primitives;
+- Added `GameFileSystem/Core.hpp` to contain forwards;
+- Added MSVC suppression code for 4244 (memcpy is size_t) and 4251 (`std::shared_mutex`, `std::shared_ptr`, `std::vector` dynamic linking export issues).
+
+### Changed
+- Restructured source files (into `Storage` subdirectory, mostly).
+
+### Removed
+- Old `storage::Directory` alias/forward.
+
 ## [0.0.1-pre-alpha1-b] - 2018-10-04
 
 Initial POSIX support.  Tested on Linux (ARM).
