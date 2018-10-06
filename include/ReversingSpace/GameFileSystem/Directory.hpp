@@ -58,7 +58,7 @@ namespace reversingspace {
 				if (!std::filesystem::is_directory(dir)) {
 					// Try to make it.
 					if (!std::filesystem::create_directories(dir)) {
-						return false;
+						return nullptr;
 					}
 				}
 				auto directory = std::make_shared<Directory>();

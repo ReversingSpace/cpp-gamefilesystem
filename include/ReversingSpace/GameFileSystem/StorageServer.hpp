@@ -30,7 +30,7 @@ namespace reversingspace {
 		 * is designed to function as an abstraction layer above 'filesystem'
 		 * type objects, and so leans on them directly.
 		 */
-		template<class UserlandFileType = PlatformFile>
+		template<class UserlandFileType>
 		class StorageServer : public FileSystem {
 		private:
 			/**

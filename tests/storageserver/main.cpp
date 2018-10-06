@@ -3,6 +3,7 @@
 #include <ReversingSpace/GameFileSystem/StorageServer.hpp>
 #include <ReversingSpace/GameFileSystem/PlatformFile.hpp>
 
+#include <cstring> // strcmp for non-VS builders.
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
