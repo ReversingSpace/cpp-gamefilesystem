@@ -19,6 +19,11 @@
 
 #include <shared_mutex>
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif//defined(_MSC_VER)
+
 namespace reversingspace {
 	namespace gfs {
 		/**
@@ -159,5 +164,9 @@ namespace reversingspace {
 		};
 	}
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif//defined(_MSC_VER)
 
 #endif//REVERSINGSPACE_GAMEFILESYSTEM_PLATFORMFILE_HPP

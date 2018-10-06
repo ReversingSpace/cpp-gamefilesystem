@@ -10,12 +10,6 @@
  * except according to those terms.
 **/
 
-#ifndef REVERSINGSPACE_GAMEFILESYSTEM_HPP
-#define REVERSINGSPACE_GAMEFILESYSTEM_HPP
+// This is the COMMON file code.
 
-// This is incomplete as it only provides storage access code.
-
-#include <ReversingSpace/Storage/File.hpp>
 #include <ReversingSpace/Storage/Directory.hpp>
-
-#endif//REVERSINGSPACE_GAMEFILESYSTEM_HPP

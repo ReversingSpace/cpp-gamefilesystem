@@ -18,8 +18,6 @@
 #ifndef REVERSINGSPACE_STORAGE_CORE_HPP
 #define REVERSINGSPACE_STORAGE_CORE_HPP
 
-#include <ReversingSpace/GameFileSystem/API.hpp>
-
 // std::uint8_t
 #include <cstdint>
 
@@ -38,16 +36,22 @@ namespace reversingspace {
 	namespace storage {
 
 		// Forward for `File`.
-		class REVSPACE_GAMEFILESYSTEM_API File;
+		class File;
 
 		/// Shared pointer type for `File`.
 		using FilePointer = std::shared_ptr<File>;
 
-		// Forward for `View`.
-		class REVSPACE_GAMEFILESYSTEM_API View;
+		// Forward for `Object`.
+		class View;
 
-		/// Shared pointer type for `View`.
+		/// Shared pointer type for `Object`.
 		using ViewPointer = std::shared_ptr<View>;
+
+		// Forward for `Directory`.
+		class Directory;
+
+		/// Shared pointer type for `Directory`.
+		using DirectoryPointer = std::shared_ptr<Directory>;
 
 		/// Storage format (to keep it consistent) for offset(s).
 		using StorageOffset = std::int64_t;

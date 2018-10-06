@@ -95,7 +95,9 @@ int main(int argc, char **argv) {
 			auto allowance = view->calculate_allowance(
 				random_value2_offset, sizeof(decltype(random_value2))
 			);
-			if (!(allowance == (sizeof(decltype(random_value2)) / 2))) {
+			if (allowance == (sizeof(decltype(random_value2)) / 2)) {
+				printf("[+] allowance test passed.\n");
+			} else {
 				printf("[-] allowance test failed.\n");
 			}
 		}

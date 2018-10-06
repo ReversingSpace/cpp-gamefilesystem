@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.1-pre-alpha2-cleanup] - 2018-10-06
+
+This is a minor code update for cleanliness, designed to change compilation only (and not the main code).
+
+### Added
+- Static/Shared testing (as split types);
+- CMake support to add tests a little easier (it mirrors a test into shared and static, depending on the build type);
+- MSVC guard for 4251 to `PlatformFile` (`std::shared_mutex` needing a DLL interface).
+
+### Fixed
+- CMake `SOURCE_GROUP` code now appropriately reflects pathing (without the need for thirdparty code, which is probably still a better idea for complex solutions);
+- Restored `BUILD_STATIC_LIBS` option.
+
 ## [0.0.1-pre-alpha2] - 2018-10-05
 
 This is a restoration patch to bring back some old functionality now that the core code is stable (and it spews far fewer warnings).  It is also a huge patch for moving towards a stable filesystem.  This will require a fairly substantial review, and lead to a need for a lot of testing.

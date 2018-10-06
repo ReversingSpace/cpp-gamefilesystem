@@ -28,18 +28,12 @@ This code likely operates fine on these platforms, but testing becomes more diff
 
 ### macOS
 
-**Presently untested**
-
 Support for Darwin/macOS (formerly Mac OS X) comes from POSIX support and `std::filesystem`.  It should be functional, but will require someone with an updated Mac to test it further.
-
-**Getting std::filesystem and std::shared_mutex to function on macOS is a known challenge.**
 
 ### Linux
 
-Linux functionality has been lightly tested for reading and writing using memory mapping.  Further testing is yet to come.
+Linux support should come from mmap as the original test code comes from there.
 
 ### OpenBSD
-
-**Presently untested**
 
 OpenBSD is currently untested, but documentation suggests it should be fine (provided you `pledge` appropriately).
