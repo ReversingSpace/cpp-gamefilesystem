@@ -50,7 +50,7 @@ namespace reversingspace {
 			 *
 			 * This is a copy.
 			 */
-			inline std::filesystem::path get_path() const {
+			std::filesystem::path get_path() const {
 				auto p = path;
 				return p;
 			}

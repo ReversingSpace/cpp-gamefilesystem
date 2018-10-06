@@ -333,6 +333,11 @@ namespace reversingspace {
 
         public:
 			/**
+			 * @brief Gets the path to the file object.
+			 */
+			std::filesystem::path get_path() const;
+
+			/**
 			 * @brief Gets a view from the mapping.
 			 * @param[in] offset Offset in the file.
 			 * @param[in] length Length of the requested map.

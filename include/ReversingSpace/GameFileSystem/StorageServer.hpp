@@ -55,6 +55,18 @@ namespace reversingspace {
 			HashFunction hash_function;
 
 		public:
+
+			/**
+			 * @brief Returns the userland path.
+			 */
+			std::filesystem::path get_path() const {
+				if (userland == nullptr) {
+					return std::filesystem::path("");
+				}
+				auto p = userland->get_path();
+				return p;
+			}
+
 			/**
 			 * @brief Constructs a storage server instance from a path.
 			 * @param[in] userland_path  Path to valid userland.
@@ -104,6 +116,33 @@ namespace reversingspace {
 				}
 				dataland.insert(dataland.begin() + position, mountable);
 				return true;
+			}
+
+			/**
+			 * @brief Unmounts a generic mountable.
+			 * @param[in] mountable    Shared pointer to the mountable.
+			 */
+			void unmount(FileSystemPointer mountable) {
+				auto mountable_path = mountable->get_path();
+				for (auto mount = dataland.begin(); mount != dataland.end(); ++mount) {
+					if ((*mount)->get_path() == mountable_path) {
+						dataland.erase(mount);
+						return;
+					}
+				}
+			}
+
+			/**
+			 * @brief Unmounts a generic mountable by path.
+			 * @param[in] mountable    Path to a mountable.
+			 */
+			void unmount(const std::filesystem::path& mountable_path) {
+				for (auto mount = dataland.begin(); mount != dataland.end(); ++mount) {
+					if ((*mount)->get_path() == mountable_path) {
+						dataland.erase(mount);
+						return;
+					}
+				}
 			}
 
 			/**

@@ -187,6 +187,58 @@ int main(int argc, char **argv) {
 			}
 		}
 
+		// Unmount
+		storage_server->unmount(tdl0_fs_path);
+
+		// tf0 should now be a miss.
+		{
+			auto tf = storage_server->get_file("test_file_0a");
+			if (tf != nullptr) {
+				std::cout << "tf0a found despite mount being removed." << std::endl;
+				throw std::runtime_error("found tf0a in an invalid way.");
+			}
+		}
+
+		// Re-mount tfdl0, at the end, which makes this next part more fun.
+		// - Storing it as a directory this time so we can test unmounting by directory in a moment.
+		reversingspace::gfs::DirectoryPointer<FileType> tdl0_dir = std::make_shared<reversingspace::gfs::Directory<FileType>>(tdl0_fs_path);
+		storage_server->mount(tdl0_dir);
+
+		// tf0 should now be a hit.
+		{
+			auto tf = storage_server->get_file("test_file_0a");
+			if (tf == nullptr) {
+				std::cout << "tf0a not found despite re-mount." << std::endl;
+				throw std::runtime_error("tf0a missing.");
+			}
+		}
+
+		// tf0 will now read from 0, not 1
+		{
+			auto tf0 = storage_server->get_file("test_file_0");
+			char test[8];
+			if (tf0->read(test, 8) != 8) {
+				std::cout << "failed to read tf0" << std::endl;
+				throw std::runtime_error("failed to read tf0");
+			}
+			if (strcmp(test, tf0_0) != 0) {
+				// Encapsulate in std::string to prevent lack of null terminator from blowing things up.
+				std::cout << "tf0 read back is invalid (should be `" << tf0_0 << "` but is `" << std::string(test) << "`" << std::endl;
+				throw std::runtime_error("failed to read tf0");
+			}
+		}
+		
+		// Unmount
+		storage_server->unmount(tdl0_dir);
+
+		// tf0 should now be a miss.
+		{
+			auto tf = storage_server->get_file("test_file_0a");
+			if (tf != nullptr) {
+				std::cout << "tf0a found despite mount being removed." << std::endl;
+				throw std::runtime_error("found tf0a in an invalid way.");
+			}
+		}
 	}
 	std::filesystem::remove_all(tdl0_fs_path);
 	std::filesystem::remove_all(tdl1_fs_path);

@@ -50,6 +50,10 @@ public: // FileSystem
 		reversingspace::storage::FileAccess access) {
 		return nullptr;
 	}
+
+	std::filesystem::path get_path() const {
+		return file->get_path();
+	}
 };
 
 reversingspace::gfs::ArchivePointer my_archive_loader(reversingspace::storage::FilePointer file) {
@@ -115,6 +119,33 @@ int main(int argc, char **argv) {
 		auto good_archive = archive_system.load("good_archive");
 		if (good_archive == nullptr) {
 			printf("good archive failed to load (this shouldn't happen)");
+			return 1;
+		}
+
+		archive_system.unregister_directory(userland_directory);
+
+		// Test good (should now fail)
+		good_archive = archive_system.load("good_archive");
+		if (good_archive != nullptr) {
+			printf("good archive load with empty tree?! (this shouldn't happen)");
+			return 1;
+		}
+
+		archive_system.register_directory(userland_directory);
+
+		// Test good
+		good_archive = archive_system.load("good_archive");
+		if (good_archive == nullptr) {
+			printf("good archive failed to load (this shouldn't happen)");
+			return 1;
+		}
+
+		archive_system.unregister_directory(userland_directory_path);
+
+		// Test good (should now fail)
+		good_archive = archive_system.load("good_archive");
+		if (good_archive != nullptr) {
+			printf("good archive load with empty tree?! (this shouldn't happen)");
 			return 1;
 		}
 	}

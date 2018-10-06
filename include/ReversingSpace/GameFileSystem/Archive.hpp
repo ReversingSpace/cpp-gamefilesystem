@@ -62,6 +62,17 @@ namespace reversingspace {
 			virtual std::uint32_t get_child_count() const = 0;
 
 		public: // FileSystem
+
+			/**
+			 * @brief Gets the path to the Archive itself.
+			 *
+			 * Should the archive be nested within another archive the system
+			 * using it should find a way to reflect it.  This path it not
+			 * tested for validity within this library, so it may be abused
+			 * as needed.
+			 */
+			virtual std::filesystem::path get_path() const = 0;
+
 			/**
 			 * @brief Gets a file from the underlying filesystem.
 			 * @param[in] identity  Hashed identity of the file.
@@ -140,6 +151,28 @@ namespace reversingspace {
 					}
 				}
 				directories.push_back(directory);
+			}
+
+			/**
+			 * @brief Unregisters/removes a Directory from the look-up path.
+			 * @param[in] dir  Shared pointer to a directory.
+			 */
+			void unregister_directory(DirectoryPointer<FileType> directory) {
+				auto path = directory->get_path();
+				unregister_directory(path);
+			}
+
+			/**
+			 * @brief Unregisters/removes a Directory from the look-up path.
+			 * @param[in] path   Filesystem path of directory.
+			 */
+			void unregister_directory(const std::filesystem::path& path) {
+				for (auto dir = directories.begin(); dir != directories.end(); ++dir) {
+					if ((*dir)->get_path() == path) {
+						directories.erase(dir);
+						return;
+					}
+				}
 			}
 
 			/**
