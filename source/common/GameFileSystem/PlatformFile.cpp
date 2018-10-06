@@ -109,6 +109,7 @@ namespace reversingspace {
 			}
 			auto count = view->write(data, requested);
 			cursor += count;
+			view->flush();
 			return count;
 		}
 
@@ -121,6 +122,7 @@ namespace reversingspace {
 			}
 			auto count = view->write(data, requested);
 			cursor += count;
+			view->flush();
 			return count;
 		}
 
@@ -132,6 +134,7 @@ namespace reversingspace {
 				return 0;
 			}
 			auto count = view->write(data, requested);
+			view->flush();
 			return count;
 		}
 
@@ -144,6 +147,7 @@ namespace reversingspace {
 				return 0;
 			}
 			auto count = view->write(data, requested);
+			view->flush();
 			return count;
 		}
 	}

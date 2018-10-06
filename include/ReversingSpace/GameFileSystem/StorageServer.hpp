@@ -20,6 +20,9 @@
 
 namespace reversingspace {
 	namespace gfs {
+		// Require PlatformFile here as a default.
+		class REVSPACE_GAMEFILESYSTEM_API PlatformFile;
+
 		/**
 		 * @brief Simple storage server system.
 		 *
@@ -27,8 +30,8 @@ namespace reversingspace {
 		 * is designed to function as an abstraction layer above 'filesystem'
 		 * type objects, and so leans on them directly.
 		 */
-		template<class UserlandFileType>
-		class REVSPACE_GAMEFILESYSTEM_API StorageServer : public FileSystem {
+		template<class UserlandFileType = PlatformFile>
+		class StorageServer : public FileSystem {
 		private:
 			/**
 			 * @brief 'Stack' of data mounts.
@@ -62,7 +65,7 @@ namespace reversingspace {
 			StorageServer(const std::filesystem::path& userland_path,
 				HashFunction hash_function = nullptr) :
 				hash_function(hash_function),
-				userland(std::make_shared<Directory>(userland_path))
+				userland(Directory<UserlandFileType>::create(userland_path))
 			{}
 
 			/**
@@ -159,7 +162,7 @@ namespace reversingspace {
 			 */
 			virtual FilePointer get_userland_file(StringIdentity identity,
 				storage::FileAccess access = storage::FileAccess::Read) {
-				return userland->get_file(identity);
+				return userland->get_file(identity, access);
 			}
 
 		public: // FileSystem
@@ -190,7 +193,7 @@ namespace reversingspace {
 			 */
 			virtual FilePointer get_file(StringIdentity identity,
 				storage::FileAccess access = storage::FileAccess::Read) {
-				auto file = get_userland_file(identity);
+				auto file = get_userland_file(identity, access);
 				if (file != nullptr) {
 					return file;
 				}
@@ -210,14 +213,14 @@ namespace reversingspace {
 			 * @brief Inline static helper to construct a StorageServer.
 			 * @param[in] userland_path  Path to valid userland.
 			 * @param[in] hash_function  (Default) HashFunction to be used.
+			 * @param[in] create_if_missing  Creates the directory if it is missing (default to true).
 			 * @return shared_ptr to a StorageServer, or nullptr on failure.
 			 *
 			 * This helper exists to ensure creation occurs only if
 			 * the userland_path exists and is valid.
 			 */
-			template<typename UserlandFileType>
 			inline static StorageServerPointer<UserlandFileType> create(const std::filesystem::path& userland_path,
-				HashFunction hash_function = nullptr) {
+				HashFunction hash_function = nullptr, bool create_if_missing = true) {
 				auto userland = userland_path;
 
 				// Allow a symlink pointing to a valid directory.
@@ -227,6 +230,11 @@ namespace reversingspace {
 				// it actually has a good reason (hello Raspberry Pi USB mounts).
 				while (std::filesystem::is_symlink(userland)) {
 					userland = std::filesystem::read_symlink(userland);
+				}
+
+				// Create if missing.
+				if (create_if_missing) {
+					std::filesystem::create_directories(userland);
 				}
 
 				// Fail if it isn't a directory.

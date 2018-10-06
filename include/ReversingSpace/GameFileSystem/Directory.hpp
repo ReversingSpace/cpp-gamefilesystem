@@ -23,7 +23,7 @@ namespace reversingspace {
 		 * @brief Directory Implementation.
 		 */
 		template<class FileType>
-		class REVSPACE_GAMEFILESYSTEM_API Directory : public FileSystem {
+		class Directory : public FileSystem {
 		private:
 			/// Directory path.
 			std::filesystem::path path;
@@ -31,6 +31,12 @@ namespace reversingspace {
 		public:
 			/// Constructor.
 			Directory() {}
+
+			/**
+			 * @brief Fallback constructor.
+			 * @param[in] dirpath  Path to a directory.
+			 */
+			Directory(const std::filesystem::path &dirpath): path(dirpath) {}
 
 			/**
 			 * @brief Creates a directory.
@@ -50,7 +56,10 @@ namespace reversingspace {
 
 				// Fail if it isn't a directory.
 				if (!std::filesystem::is_directory(dir)) {
-					return nullptr;
+					// Try to make it.
+					if (!std::filesystem::create_directories(dir)) {
+						return false;
+					}
 				}
 				auto directory = std::make_shared<Directory>();
 				directory->path = dir;

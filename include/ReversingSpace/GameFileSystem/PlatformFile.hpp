@@ -45,6 +45,43 @@ namespace reversingspace {
 			/// Read/write mutex.
 			std::shared_mutex rw_mutex;
 
+		public: // 'create' to allow this to be used by StorageServer
+
+			/**
+			 * @brief Gets the underlying stored file.
+			 * @return Shared pointer to a `storage::FilePointer`.
+			 *
+			 * This should be used with great care, mostly because it will
+			 * require a cast (and dynamic_casting isn't free!).
+			 */
+			inline storage::FilePointer get_stored_file() {
+				return stored_file;
+			}
+
+			/**
+			 * @brief Inline static helper to construct a PlatformFile.
+			 * @param[in] path    Path to file.
+			 * @param[in] access  Requested access to file.
+			 * @return shared_ptr to a PlatformFile, or nullptr on failure.
+			 */
+			inline static PlatformFilePointer create(const std::filesystem::path& path,
+				storage::FileAccess access = storage::FileAccess::Read) {
+				
+				// Get a stored file.
+				// This leaves issue #2 (symlinking) an upstream issue
+				// and not something that needs re-addressing here!
+				auto stored = storage::File::create(path, access);
+				if (stored == nullptr) {
+					return nullptr;
+				}
+
+				// Create and return.
+				auto file = std::make_shared<PlatformFile>();
+				file->stored_file = stored;
+				file->cursor = 0;
+				return file;
+			}
+
 		public: // File
 
 			/**

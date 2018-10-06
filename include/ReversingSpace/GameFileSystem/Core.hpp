@@ -54,7 +54,7 @@ namespace reversingspace {
 		using HashFunction = std::function<HashedIdentity(StringIdentity name)>;
 
 		// Forward for `File`.
-		class REVSPACE_GAMEFILESYSTEM_API File;
+		class File;
 
 		/// Shared pointer type for `File`.
 		using FilePointer = std::shared_ptr<File>;
@@ -68,25 +68,31 @@ namespace reversingspace {
 		using DirectoryPointer = std::shared_ptr<Directory<UserlandFileType>>;
 
 		// Forward for `FileSystem`.
-		class REVSPACE_GAMEFILESYSTEM_API FileSystem;
+		class FileSystem;
 
 		/// Shared pointer type for `FileSystem`.
 		using FileSystemPointer = std::shared_ptr<FileSystem>;
 
 		// Forward for `Archive`.
-		class REVSPACE_GAMEFILESYSTEM_API Archive;
+		class Archive;
 
 		/// Shared pointer type for `File`.
 		using ArchivePointer = std::shared_ptr<Archive>;
 
+		// Forward for `PlatformFile`.
+		class REVSPACE_GAMEFILESYSTEM_API PlatformFile;
+
+		/// Shared pointer type for `PlatformFile`.
+		using PlatformFilePointer = std::shared_ptr<PlatformFile>;
+
 		// Forward for `StorageServer`.
-		template<class UserlandFileType>
-		class REVSPACE_GAMEFILESYSTEM_API StorageServer;
+		template<class UserlandFileType = PlatformFile>
+		class StorageServer;
 
 		/// Shared pointer type for `StorageServer`.
 		// This should almost never be used, but it's here for completeness
 		// and to support a Rust-style constructor (`StorageServer::create`).
-		template<class UserlandFileType>
+		template<class UserlandFileType = PlatformFile>
 		using StorageServerPointer = std::shared_ptr<StorageServer<UserlandFileType>>;
 	}
 }

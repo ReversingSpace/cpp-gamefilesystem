@@ -61,3 +61,27 @@ rs_gfs_test(
 )
 
 # ---------------------------------------------------------------------
+# Storage Server Testing (a little more comprehensive)
+# ---------------------------------------------------------------------
+
+set(REVERSINGSPACE_STORAGESERVER_TEST_SOURCES
+    "${PROJECT_SOURCE_DIR}/tests/storageserver/main.cpp"
+)
+
+set(REVERSINGSPACE_STORAGESERVER_TEST_INCLUDE_DIRS 
+    "${PROJECT_SOURCE_DIR}/tests/storageserver/"
+)
+
+option(
+    REVERSINGSPACE_STORAGESERVER_TEST
+    "Simple test for the StorageServer"
+    OFF
+)
+
+rs_gfs_test(
+    REVERSINGSPACE_STORAGESERVER_TEST
+    "revspace-storage-test-storageserver"
+    ${REVERSINGSPACE_STORAGESERVER_TEST_INCLUDE_DIRS}
+    ${REVERSINGSPACE_STORAGESERVER_TEST_SOURCES}
+    "" # No libs
+)

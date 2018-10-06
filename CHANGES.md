@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.1-pre-alpha3-test-fix] - 2018-10-06
+
+Fix to StorageServer templating and addition of a simple test.
+
+### Added
+- Storage Server test;
+- `Directory` constructor (to bypass symlinking, creation of directories, and all other `create` related code);
+- Added flush to all `PlatformFile` write functions (as the view does not auto-flush anymore);
+- Added `get_stored_file` to `PlatformFile` (to allow proper memory mapping to occur for advanced usage).
+
+### Fixed
+- Removed erroneous template from StorageServer's static `create`;
+- Issue in `StorageServer` constructor;
+- `access` variable not being passed through userland lookups.
+
+### Changed
+- `StorageServer::create` now contains `create_if_missing` (default true) to create missing paths without needing user intervention;
+- `Directory::create` now creates the missing directory when it attempts to load it.  This can be bypassed by using a manual construction of the directory (which can be done by calling the constructor).
+
 ## [0.0.1-pre-alpha2-cleanup] - 2018-10-06
 
 This is a minor code update for cleanliness, designed to change compilation only (and not the main code).
