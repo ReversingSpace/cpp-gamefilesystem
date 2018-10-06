@@ -37,7 +37,6 @@
 
 namespace reversingspace {
 	namespace gfs {
-
 		/// If the file is below this size it will be completely mapped
 		/// as a view (256 * KB * B -> 256MB).
 		const std::uint64_t AUTO_FULL_MAP_SIZE = 256 * 1024 * 1024;

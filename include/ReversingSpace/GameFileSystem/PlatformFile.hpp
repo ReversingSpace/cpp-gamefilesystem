@@ -79,6 +79,7 @@ namespace reversingspace {
 				auto file = std::make_shared<PlatformFile>();
 				file->stored_file = stored;
 				file->cursor = 0;
+
 				return file;
 			}
 

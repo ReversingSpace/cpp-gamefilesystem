@@ -29,6 +29,32 @@ namespace reversingspace {
 			std::filesystem::path path;
 
 		public:
+			/**
+			 * @brief Gets a child path from the directory.
+			 * @param[in] name  Name of the child to be appended.
+			 * @return child path (unchecked).
+			 *
+			 * This method does not check for validity of the path,
+			 * this is a task left up to the user/developer.
+			 *
+			 * This is a helper/utility function for advanced use-cases
+			 * where it's preferable to use the gfs's Directory API over
+			 * direct `std::filesystem` interaction.
+			 */
+			inline std::filesystem::path get_child_path(const std::string& name) const {
+				return path / name;
+			}
+
+			/**
+			 * @brief Gets a copy of the internal path.
+			 *
+			 * This is a copy.
+			 */
+			inline std::filesystem::path get_path() const {
+				auto p = path;
+				return p;
+			}
+
 			/// Constructor.
 			Directory() {}
 
@@ -44,10 +70,6 @@ namespace reversingspace {
 			 * @return Shared pointer to a Directory.
 			 */
 			static DirectoryPointer<FileType> create(const std::filesystem::path &dirpath) {
-				if (!std::filesystem::is_directory(dirpath)) {
-					return nullptr;
-				}
-
 				std::filesystem::path dir = dirpath;
 				
 				while (std::filesystem::is_symlink(dir)) {

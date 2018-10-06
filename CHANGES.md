@@ -6,6 +6,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Dates are given based on Coordinated Universal Time (UTC).
 
+## [0.0.2] - 2018-10-06
+
+With the core code stable (or stable enough?), this is a push towards making things more stable and consistent.  The next step is `Archive` support, which is more or less exactly what it sounds like.
+
+No archive builder code is scheduled to be added to the core library, nor is it currently a consideration (as the methods for building archives vary too much).
+
+### Added
+- `get_child_path` to `gfs::Directory`, to allow archive loading to be done without needing to pull the stored file from underneath (though it's a bit excessive, so it's an inline) -- this is required to reduce the `ArchiveSystem` overhead without restricting it;
+- Partial resolution code for [Issue `#9`](https://github.com/ReversingSpace/cpp-gamefilesystem/issues/9):
+  - `StorageSize get_absolute_offset() const` to `storage::View` (as an inline);
+  - `StorageSize get_file_offset() const` to `storage::View` (as an inline);
+  - `StorageSize get_offset() const` (as an inline).
+- Archive support:
+  - `gfs::Archive` definition (it's an interface);
+  - `gfs::ArchiveLoaderFunc` definition (it's just a `std::function`);
+  - `gfs::ArchiveSystem` (trivial templated class for loading archives);
+  - An archive loader test.
+
+### Fixed
+- Added `GameFilesystem/Core.hpp` to `CMakeLists.txt` (it was previously missing, though it has no real effect short of being missing from IDEs);
+- Removed duplicate header include from `CMakeLists.txt` (again, no ill effects);
+- Removed old test from `Directory::create` so it actually creates on missing;
+- Bad API inclusion/removal from the previous chain of patching (now compiles after clean).
+
 ## [0.0.1-pre-alpha3-test-fix] - 2018-10-06
 
 Fix to StorageServer templating and addition of a simple test.
