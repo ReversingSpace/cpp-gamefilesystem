@@ -35,6 +35,12 @@ namespace reversingspace {
 			virtual ~FileSystem() {}
 
 		public: // Core requirements.
+
+			/**
+			 * @brief Gets the filesystem path of the filesystem.
+			 */
+			virtual std::filesystem::path get_path() const = 0;
+			 
 			/**
 			 * @brief Gets a file from the underlying filesystem.
 			 * @param[in] identity  Hashed identity of the file.

@@ -28,6 +28,11 @@ namespace reversingspace {
 			//file_handle = PLATFORM_INVALID_FILE_HANDLE;
 		}
 
+		std::filesystem::path File::get_path() const {
+			auto p = path;
+			return p;
+		}
+
 		FilePointer File::create(const std::filesystem::path& path,
 				FileAccess access) {
 

@@ -85,3 +85,29 @@ rs_gfs_test(
     ${REVERSINGSPACE_STORAGESERVER_TEST_SOURCES}
     "" # No libs
 )
+
+# ---------------------------------------------------------------------
+# ArchiveSystem Testing
+# ---------------------------------------------------------------------
+
+set(REVERSINGSPACE_ARCHIVESYSTEM_TEST_SOURCES
+    "${PROJECT_SOURCE_DIR}/tests/archivesystem/main.cpp"
+)
+
+set(REVERSINGSPACE_ARCHIVESYSTEM_TEST_INCLUDE_DIRS 
+    "${PROJECT_SOURCE_DIR}/tests/archivesystem/"
+)
+
+option(
+    REVERSINGSPACE_ARCHIVESYSTEM_TEST
+    "Simple test for the ArchiveSystem"
+    OFF
+)
+
+rs_gfs_test(
+    REVERSINGSPACE_ARCHIVESYSTEM_TEST
+    "revspace-storage-test-archivesystem"
+    ${REVERSINGSPACE_ARCHIVESYSTEM_TEST_INCLUDE_DIRS}
+    ${REVERSINGSPACE_ARCHIVESYSTEM_TEST_SOURCES}
+    "" # No libs
+)

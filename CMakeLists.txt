@@ -63,8 +63,8 @@ set(HEADERS_ROOT
 source_group("Header Files\\ReversingSpace" FILES ${HEADERS_ROOT})
 
 set(HEADERS_GAMEFILESYSTEM
-    # Root include
-    "${PROJECT_SOURCE_DIR}/include/ReversingSpace/GameFileSystem.hpp"
+    # Core include
+    "${PROJECT_SOURCE_DIR}/include/ReversingSpace/GameFileSystem/Core.hpp"
 
     # API (common configuration/includes)
     "${PROJECT_SOURCE_DIR}/include/ReversingSpace/GameFileSystem/API.hpp"

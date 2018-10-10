@@ -36,7 +36,7 @@ namespace reversingspace {
 		 * as a 'map' or a 'view'.  It is called `View` here as it is a view
 		 * into a given map.
 		 */
-		class View {
+		class REVSPACE_GAMEFILESYSTEM_API View {
 		private:
 			/**
 			 * @brief Allow `File` to create without exposing.
@@ -149,6 +149,30 @@ namespace reversingspace {
 			 */
 			inline StorageSize get_size() const {
 				return view_length;
+			}
+
+			/**
+			 * @brief Gets the absolute offset in the file.
+			 * @return Sum of cursor and file offset (absolute offset).
+			 */
+			inline StorageSize get_absolute_offset() const {
+				return cursor + file_offset;
+			}
+
+			/**
+			 * @brief Gets the file offset (how far into the file the view is).
+			 * @return File offset
+			 */
+			inline StorageSize get_file_offset() const {
+				return file_offset;
+			}
+
+			/**
+			 * @brief Gets offset (within view/cursor).
+			 * @return The internal view offset (or cursor).
+			 */
+			inline StorageSize get_offset() const {
+				return cursor;
 			}
 
 			/**
@@ -267,7 +291,7 @@ namespace reversingspace {
 		 * The constructor is not hidden, but is completely useless (by design).
 		 * Use the static `create` method to create a `File` object.
         **/ 
-        class File : public std::enable_shared_from_this<File> {
+        class REVSPACE_GAMEFILESYSTEM_API File : public std::enable_shared_from_this<File> {
 		private:
 
 			/**
@@ -308,6 +332,11 @@ namespace reversingspace {
 			void close();
 
         public:
+			/**
+			 * @brief Gets the path to the file object.
+			 */
+			std::filesystem::path get_path() const;
+
 			/**
 			 * @brief Gets a view from the mapping.
 			 * @param[in] offset Offset in the file.
