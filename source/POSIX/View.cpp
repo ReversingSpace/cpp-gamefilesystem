@@ -96,6 +96,10 @@ namespace reversingspace {
 			}
 			cursor = 0;
 			view_pointer = (char*)view_pointer + file_offset - real_offset;
+			
+			// Push mapping size.
+			view_length = mapping_size;
+
 			return true;
 		}
 
