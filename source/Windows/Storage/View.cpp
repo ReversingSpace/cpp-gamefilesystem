@@ -104,6 +104,9 @@ namespace reversingspace {
 			// Fix the view pointer.
 			view_pointer = (char*)view_pointer + file_offset - real_offset;
 
+			// Push mapping.
+			view_length = mapping_size;
+
 			// Take no chances.
 			cursor = 0;
 			return true;
